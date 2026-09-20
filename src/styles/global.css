@@ -462,6 +462,10 @@ main > .wrap:first-child {
     .feature--stacked.feature--half .feature__text {
       display: contents;
     }
+
+    .feature--stacked.feature--half .feature__image {
+      align-self: start;
+    }
   }
 }
 
