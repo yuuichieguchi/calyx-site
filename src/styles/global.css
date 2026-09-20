@@ -444,6 +444,27 @@ main > .wrap:first-child {
   margin-top: 1.5rem;
 }
 
+/*
+ * Paired half-width stacked panes (approvals/subagents, sessions/terminal) can
+ * have bodies of different line counts, which otherwise pushes the shorter
+ * pane's image above its partner's. Subgrid lets both panes in the row share
+ * heading/body/image row tracks so the images start at the same line; the
+ * shorter body just leaves blank space above its image instead.
+ */
+@supports (grid-template-rows: subgrid) {
+  @media (min-width: 900px) {
+    .feature--stacked.feature--half {
+      display: grid;
+      grid-row: span 3;
+      grid-template-rows: subgrid;
+    }
+
+    .feature--stacked.feature--half .feature__text {
+      display: contents;
+    }
+  }
+}
+
 @media (min-width: 900px) {
   .feature--text-image .feature__image,
   .feature--image-text .feature__image {
