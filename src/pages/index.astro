@@ -1,0 +1,201 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import DemoVideo from '../components/DemoVideo.astro';
+import Feature from '../components/Feature.astro';
+import Install from '../components/Install.astro';
+import Faq from '../components/Faq.astro';
+import Footer from '../components/Footer.astro';
+import LandingHead from '../components/LandingHead.astro';
+
+import { APPCAST_URL, ZIP_URL, featureImages, featureLayout, getReleaseChipText } from '../lib/site';
+
+const chipText = await getReleaseChipText();
+
+const featureText: Record<string, { heading: string; body: string; alt?: string }> = {
+  agents: {
+    heading: 'See which agent needs you',
+    body: 'The Agents Sidebar lists every connected agent as working, blocked, idle, or done, with the pane’s own title, working directory, and CLI. Unread badges mark the panes that spoke while you were elsewhere, and a click focuses the pane.',
+    alt: 'The Agents Sidebar listing three connected agents with their state, pane title, and CLI name.',
+  },
+  approvals: {
+    heading: 'Answer permission prompts in one place',
+    body: 'Claude Code and Codex permission prompts, the tool calls of always-approve Grok sessions, and every pi tool call arrive in a notification-style panel: a primary action, plus an Options menu carrying every other choice the CLI offers. Turn the integration on in Settings. Even then, auto-approval is a separate opt-in, so nothing is approved for you until you ask for it.',
+    alt: 'A permission request in a notification-style panel at the top right of the screen, with a primary action and an Options menu.',
+  },
+  subagents: {
+    heading: 'Follow the work an agent delegates',
+    body: 'A pane running subagents gains a count badge and expands into indented child rows, for the CLIs that report them. Each child shows its state, and the tool it is working on with the command, path, or URL where its CLI reports one.',
+    alt: 'A pane row expanded into indented child rows, one per running subagent, each with its own state.',
+  },
+  git: {
+    heading: 'Review the diff without leaving the terminal',
+    body: 'Working changes, staging state, and commit history sit in the Git sidebar, one section per repository the window can reach. Comment on individual diff lines and submit the whole review to an agent pane.',
+    alt: 'The Git sidebar showing unstaged files and the commit graph beside a diff of README.md.',
+  },
+  sessions: {
+    heading: 'Sessions that outlive the app',
+    body: 'Opt-in daemon-backed terminals survive quit and crashes. The Session Browser lists what is still running so you can reattach, including sessions on an SSH host you deployed calyx-session to.',
+    alt: 'The Session Browser window listing two running persistent sessions with Show and Kill buttons.',
+  },
+  terminal: {
+    heading: 'A terminal first',
+    body: 'libghostty renders on Metal. Calyx reads ~/.config/ghostty/config and hot-reloads most of it, then adds tab groups, splits, a command palette, scrollback search, and a Liquid Glass window that turns fully opaque under Reduce Transparency.',
+    alt: 'A Calyx window with one terminal pane and the tab sidebar, its translucent chrome showing the desktop wallpaper through it.',
+  },
+  mcp: {
+    heading: 'Give agents a terminal they can read',
+    body: 'Panes, commands, captured output, browser tabs, language servers, and peer agents are exposed over MCP and the bundled calyx CLI. An agent waits for a command to finish and reads its result instead of sleeping and guessing. Command text and captured output are checked for known secret patterns and redacted before an agent can read them.',
+  },
+};
+
+const features = featureLayout.map((entry) => {
+  const text = featureText[entry.tab];
+  if (!text) throw new Error(`Missing feature text for tab "${entry.tab}"`);
+  return {
+    tab: entry.tab,
+    heading: text.heading,
+    body: text.body,
+    image: entry.image && text.alt ? { src: entry.image, alt: text.alt } : undefined,
+    span: entry.span,
+    layout: entry.layout,
+  };
+});
+---
+
+<html lang="en">
+  <head>
+    <LandingHead
+      title="Calyx | Run more coding agents without babysitting more terminals"
+      description="Calyx is a native macOS terminal for running Claude Code, Codex, OpenCode, Hermes, Grok, and pi side by side."
+      canonical="https://getcalyx.app/"
+      ogTitle="Calyx: run more coding agents without babysitting more terminals"
+      ogDescription="A native macOS terminal for running Claude Code, Codex, OpenCode, Hermes, Grok, and pi side by side."
+      ogUrl="https://getcalyx.app/"
+      ogImageAlt="The Agents Sidebar listing three connected agents with their state, pane title, and CLI name."
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-heading">Skip to content</a>
+    <Header
+      navLabel="Site"
+      docsLabel="Docs"
+      docsHref="https://help.getcalyx.app/"
+      githubLabel="GitHub"
+      githubHref="https://github.com/yuuichieguchi/Calyx"
+      langSwitchLabel="日本語"
+      langSwitchHref="/ja/"
+      downloadLabel="Download"
+      downloadHref={ZIP_URL}
+      homeHref="/"
+    />
+    <main>
+      <div class="wrap">
+        <Hero
+          heading="Run more coding agents without babysitting more terminals."
+          lead="Calyx is a native macOS terminal for running Claude Code, Codex, OpenCode, Hermes, Grok, and pi side by side. Live status for every agent, one panel for the prompts they raise, sessions that survive a quit, and diff review that goes back to the pane that wrote the code."
+          downloadLabel="Download for Mac"
+          downloadHref={ZIP_URL}
+          chipText={chipText}
+          brewCommand="brew install --cask calyx"
+          copyLabel="Copy"
+          copiedLabel="Copied"
+          copyFailedLabel="Copy failed"
+          githubHref="https://github.com/yuuichieguchi/Calyx"
+          githubLinkLabel="View on GitHub"
+          systemRequirements="macOS 26 Tahoe or later. Apple Silicon. MIT licensed."
+          appcastUrl={APPCAST_URL}
+        />
+      </div>
+
+      <div class="wrap">
+        <DemoVideo
+          label="demo"
+          heading="Demo"
+          poster={featureImages.agentSidebar}
+          playLabel="Play demo video"
+          pauseLabel="Pause demo video"
+        />
+      </div>
+
+      <div class="wrap features">
+        {
+          features.map((feature) => (
+            <Feature
+              tab={feature.tab}
+              heading={feature.heading}
+              body={feature.body}
+              image={feature.image}
+              span={feature.span}
+              layout={feature.layout}
+            />
+          ))
+        }
+      </div>
+
+      <div class="wrap">
+        <Install
+          label="install"
+          heading="Install"
+          brewColumnLabel="Homebrew"
+          brewCommand="brew install --cask calyx"
+          brewNote="Update with brew upgrade --cask calyx."
+          manualColumnLabel="Manual download"
+          manualSteps={['Download Calyx.zip', 'Unzip it', 'Move Calyx.app to /Applications']}
+          manualNote="Direct downloads update through Sparkle."
+        />
+      </div>
+
+      <div class="wrap">
+        <Faq
+          label="faq"
+          heading="Questions"
+          items={[
+            { question: 'Which Macs can run Calyx?', answer: 'macOS 26 Tahoe or later, on Apple Silicon (arm64). There is no Intel build.' },
+            { question: 'What does it cost?', answer: 'Nothing. Calyx is open source under the MIT license.' },
+            { question: 'Which agents does it work with?', answer: 'Claude Code, Codex, OpenCode, Hermes, Grok, and pi, plus panes hosted by herdr.' },
+            { question: 'Does Calyx approve anything on its own?', answer: 'No. The approval integration is off until you turn it on in Settings, and auto-approval is a separate opt-in on top of that. pi ships no permission prompt of its own, so with the integration off its tool calls run unreviewed.' },
+            { question: 'How does it relate to Ghostty?', answer: 'Calyx renders with libghostty from Ghostty v1.3.1, reads ~/.config/ghostty/config, and can bind its own operations to Ghostty keybind actions.' },
+            { question: 'Do sessions survive quitting the app?', answer: 'They do once you enable persistent sessions. A calyx-session daemon holds them, and the Session Browser reattaches. Deploy calyx-session to an SSH host to do the same remotely.' },
+            {
+              question: 'Does Calyx send my data anywhere?',
+              answer: 'No telemetry and no analytics. Outbound traffic is limited to the Sparkle appcast and release download, the optional language-server install, and the browser tabs and SSH connections you start yourself.',
+              link: { label: 'Privacy policy', href: 'https://help.getcalyx.app/legal/privacy/' },
+            },
+            { question: 'How do updates work?', answer: 'Direct downloads update through Sparkle. Homebrew installs update with brew upgrade --cask calyx.' },
+          ]}
+        />
+      </div>
+    </main>
+
+    <Footer
+      columns={[
+        {
+          heading: 'Documentation',
+          links: [
+            { label: 'Getting Started', href: 'https://help.getcalyx.app/getting-started/' },
+            { label: 'Usage', href: 'https://help.getcalyx.app/usage/' },
+            { label: 'Reference', href: 'https://help.getcalyx.app/reference/' },
+          ],
+        },
+        {
+          heading: 'Policies',
+          links: [
+            { label: 'Terms', href: 'https://help.getcalyx.app/legal/terms/' },
+            { label: 'Privacy', href: 'https://help.getcalyx.app/legal/privacy/' },
+            { label: 'License', href: 'https://help.getcalyx.app/legal/license/' },
+          ],
+        },
+        {
+          heading: 'Project',
+          links: [
+            { label: 'GitHub', href: 'https://github.com/yuuichieguchi/Calyx' },
+            { label: 'Releases', href: 'https://github.com/yuuichieguchi/Calyx/releases' },
+          ],
+        },
+      ]}
+      copyright="Calyx is open source under the MIT license."
+    />
+  </body>
+</html>

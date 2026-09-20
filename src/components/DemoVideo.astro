@@ -1,0 +1,111 @@
+---
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro:assets';
+
+export interface Props {
+  label: string;
+  heading: string;
+  poster: ImageMetadata;
+  playLabel: string;
+  pauseLabel: string;
+}
+
+const { label, heading, poster, playLabel, pauseLabel } = Astro.props;
+const optimizedPoster = await getImage({ src: poster });
+---
+
+<section class="pane demo" aria-label={heading}>
+  <span class="pane__label mono">{label}</span>
+  <div class="demo__frame">
+    <div class="demo__scripted">
+      <video
+        data-demo-video
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        poster={optimizedPoster.src}
+      >
+        <source src="/demo.mp4" type="video/mp4" />
+      </video>
+      <button
+        type="button"
+        class="demo__toggle"
+        data-demo-toggle
+        data-play-label={playLabel}
+        data-pause-label={pauseLabel}
+        aria-label={playLabel}
+      >
+        <svg data-demo-icon-play viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8 5 L19 12 L8 19 Z" fill="currentColor" />
+        </svg>
+        <svg data-demo-icon-pause viewBox="0 0 24 24" aria-hidden="true" hidden>
+          <rect x="6" y="5" width="4" height="14" fill="currentColor" />
+          <rect x="14" y="5" width="4" height="14" fill="currentColor" />
+        </svg>
+      </button>
+    </div>
+    <noscript>
+      <style is:inline>
+        .demo__scripted {
+          display: none;
+        }
+      </style>
+      <video controls preload="metadata" poster={optimizedPoster.src}>
+        <source src="/demo.mp4" type="video/mp4" />
+      </video>
+    </noscript>
+  </div>
+</section>
+
+<script>
+  const video = document.querySelector<HTMLVideoElement>('[data-demo-video]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-demo-toggle]');
+  const iconPlay = document.querySelector<SVGElement>('[data-demo-icon-play]');
+  const iconPause = document.querySelector<SVGElement>('[data-demo-icon-pause]');
+
+  if (
+    video &&
+    toggle &&
+    iconPlay &&
+    iconPause &&
+    toggle.dataset.playLabel !== undefined &&
+    toggle.dataset.pauseLabel !== undefined
+  ) {
+    const playLabel = toggle.dataset.playLabel;
+    const pauseLabel = toggle.dataset.pauseLabel;
+
+    const syncState = () => {
+      const isPlaying = !video.paused && !video.ended;
+      toggle.setAttribute('aria-label', isPlaying ? pauseLabel : playLabel);
+      iconPlay.toggleAttribute('hidden', isPlaying);
+      iconPause.toggleAttribute('hidden', !isPlaying);
+    };
+
+    video.addEventListener('play', syncState);
+    video.addEventListener('pause', syncState);
+
+    toggle.addEventListener('click', () => {
+      if (video.paused) {
+        void video.play();
+      } else {
+        video.pause();
+      }
+    });
+
+    const wantsSaveData = (): boolean => {
+      if (!('connection' in navigator)) return false;
+      const connection: unknown = navigator.connection;
+      if (typeof connection !== 'object' || connection === null) return false;
+      if (!('saveData' in connection)) return false;
+      return connection.saveData === true;
+    };
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduceMotion && !wantsSaveData()) {
+      void video.play();
+    }
+
+    syncState();
+  }
+</script>

@@ -1,0 +1,45 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+
+export interface Props {
+  navLabel: string;
+  docsLabel: string;
+  docsHref: string;
+  githubLabel: string;
+  githubHref: string;
+  langSwitchLabel: string;
+  langSwitchHref: string;
+  downloadLabel: string;
+  downloadHref: string;
+  homeHref: string;
+}
+
+const {
+  navLabel,
+  docsLabel,
+  docsHref,
+  githubLabel,
+  githubHref,
+  langSwitchLabel,
+  langSwitchHref,
+  downloadLabel,
+  downloadHref,
+  homeHref,
+} = Astro.props;
+---
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="site-header__logo" href={homeHref}>
+      <Image src={logo} alt="" width={28} height={28} densities={[1, 2]} />
+      Calyx
+    </a>
+    <nav class="site-header__links" aria-label={navLabel}>
+      <a href={docsHref}>{docsLabel}</a>
+      <a href={githubHref}>{githubLabel}</a>
+      <a href={langSwitchHref}>{langSwitchLabel}</a>
+    </nav>
+    <a class="button button--sm site-header__download" href={downloadHref}>{downloadLabel}</a>
+  </div>
+</header>

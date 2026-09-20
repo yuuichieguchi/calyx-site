@@ -1,0 +1,126 @@
+---
+export interface Props {
+  heading: string;
+  headingSegments?: string[];
+  lead: string;
+  downloadLabel: string;
+  downloadHref: string;
+  chipText: string | null;
+  brewCommand: string;
+  copyLabel: string;
+  copiedLabel: string;
+  copyFailedLabel: string;
+  githubHref: string;
+  githubLinkLabel: string;
+  systemRequirements: string;
+  appcastUrl: string;
+}
+
+const {
+  heading,
+  headingSegments,
+  lead,
+  downloadLabel,
+  downloadHref,
+  chipText,
+  brewCommand,
+  copyLabel,
+  copiedLabel,
+  copyFailedLabel,
+  githubHref,
+  githubLinkLabel,
+  systemRequirements,
+  appcastUrl,
+} = Astro.props;
+---
+
+<section class="pane hero">
+  <h1 id="main-heading" tabindex="-1">{
+    headingSegments
+      ? headingSegments.map((segment) => <span class="hero__heading-segment">{segment}</span>)
+      : heading
+  }</h1>
+  <p class="hero__lead">{lead}</p>
+  <div class="hero__actions">
+    <a class="button button--lg" href={downloadHref}>{downloadLabel}</a>
+    <div class="command-box">
+      <code>{brewCommand}</code>
+      <button
+        type="button"
+        data-copy-command
+        data-command={brewCommand}
+        data-copy-label={copyLabel}
+        data-copied-label={copiedLabel}
+        data-copy-failed-label={copyFailedLabel}
+      >
+        {copyLabel}
+      </button>
+    </div>
+    <a class="button button--outline button--lg" href={githubHref}>{githubLinkLabel}</a>
+  </div>
+  <span class="hero__chip mono" data-version-chip data-appcast-url={appcastUrl} hidden={chipText === null}>{chipText}</span>
+  <p class="hero__meta">{systemRequirements}</p>
+</section>
+
+<script>
+  const copyButton = document.querySelector<HTMLButtonElement>('[data-copy-command]');
+  if (
+    copyButton &&
+    copyButton.dataset.command !== undefined &&
+    copyButton.dataset.copyLabel !== undefined &&
+    copyButton.dataset.copiedLabel !== undefined &&
+    copyButton.dataset.copyFailedLabel !== undefined
+  ) {
+    const command = copyButton.dataset.command;
+    const copyLabel = copyButton.dataset.copyLabel;
+    const copiedLabel = copyButton.dataset.copiedLabel;
+    const copyFailedLabel = copyButton.dataset.copyFailedLabel;
+
+    let resetTimeoutId: number | undefined;
+
+    const showResult = (label: string) => {
+      if (resetTimeoutId !== undefined) window.clearTimeout(resetTimeoutId);
+      copyButton.textContent = label;
+      resetTimeoutId = window.setTimeout(() => {
+        copyButton.textContent = copyLabel;
+        resetTimeoutId = undefined;
+      }, 2000);
+    };
+
+    copyButton.addEventListener('click', () => {
+      if (!('clipboard' in navigator) || !navigator.clipboard) {
+        showResult(copyFailedLabel);
+        return;
+      }
+      void navigator.clipboard.writeText(command).then(
+        () => showResult(copiedLabel),
+        () => showResult(copyFailedLabel)
+      );
+    });
+  }
+</script>
+
+<script>
+  import { parseAppcast, formatMegabytes } from '../lib/appcast';
+
+  const chip = document.querySelector<HTMLElement>('[data-version-chip]');
+  const appcastUrl = chip?.dataset.appcastUrl;
+
+  if (chip && appcastUrl) {
+    // The spec requires the chip to stay as-is (or hidden) on any fetch or
+    // parse failure rather than surface an error to the visitor.
+    try {
+      const response = await fetch(appcastUrl);
+      if (response.ok) {
+        const xml = await response.text();
+        const info = parseAppcast(xml);
+        if (info !== null) {
+          chip.textContent = `v${info.version} · ${formatMegabytes(info.length)}`;
+          chip.hidden = false;
+        }
+      }
+    } catch {
+      // Network failure: leave the chip in its build-time state.
+    }
+  }
+</script>

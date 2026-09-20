@@ -1,0 +1,34 @@
+---
+import HeadBase from './HeadBase.astro';
+import { getOgImage } from '../lib/site';
+
+export interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  ogTitle: string;
+  ogDescription: string;
+  ogUrl: string;
+  ogImageAlt: string;
+}
+
+const { title, description, canonical, ogTitle, ogDescription, ogUrl, ogImageAlt } = Astro.props;
+const ogImage = await getOgImage(Astro.site);
+---
+
+<HeadBase />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<link rel="alternate" hreflang="en" href="https://getcalyx.app/" />
+<link rel="alternate" hreflang="ja" href="https://getcalyx.app/ja/" />
+<link rel="alternate" hreflang="x-default" href="https://getcalyx.app/" />
+<meta property="og:title" content={ogTitle} />
+<meta property="og:description" content={ogDescription} />
+<meta property="og:type" content="website" />
+<meta property="og:url" content={ogUrl} />
+<meta property="og:image" content={ogImage.url} />
+{ogImage.width !== undefined && <meta property="og:image:width" content={String(ogImage.width)} />}
+{ogImage.height !== undefined && <meta property="og:image:height" content={String(ogImage.height)} />}
+<meta property="og:image:alt" content={ogImageAlt} />
+<meta name="twitter:card" content="summary_large_image" />

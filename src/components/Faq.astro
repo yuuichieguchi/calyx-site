@@ -1,0 +1,38 @@
+---
+export interface FaqItem {
+  question: string;
+  answer: string;
+  link?: { label: string; href: string };
+}
+
+export interface Props {
+  label: string;
+  heading: string;
+  items: FaqItem[];
+}
+
+const { label, heading, items } = Astro.props;
+---
+
+<section class="pane" aria-labelledby="faq-heading">
+  <span class="pane__label mono">{label}</span>
+  <h2 id="faq-heading">{heading}</h2>
+  <div class="faq__list">
+    {
+      items.map((item) => (
+        <div class="faq__item">
+          <h3>{item.question}</h3>
+          <p>
+            {item.answer}
+            {item.link && (
+              <>
+                {' '}
+                <a href={item.link.href}>{item.link.label}</a>
+              </>
+            )}
+          </p>
+        </div>
+      ))
+    }
+  </div>
+</section>

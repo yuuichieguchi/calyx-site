@@ -1,0 +1,24 @@
+{
+  "name": "calyx-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "deploy": "wrangler deploy",
+    "cf:dev": "wrangler dev",
+    "test": "npm run build && vitest run"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.0.3",
+    "sharp": "^0.35.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0",
+    "vitest": "^5.0.1",
+    "wrangler": "^4.20.0"
+  }
+}

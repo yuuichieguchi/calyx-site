@@ -1,0 +1,44 @@
+---
+export interface Props {
+  label: string;
+  heading: string;
+  brewColumnLabel: string;
+  brewCommand: string;
+  brewNote: string;
+  manualColumnLabel: string;
+  manualSteps: string[];
+  manualNote: string;
+}
+
+const {
+  label,
+  heading,
+  brewColumnLabel,
+  brewCommand,
+  brewNote,
+  manualColumnLabel,
+  manualSteps,
+  manualNote,
+} = Astro.props;
+---
+
+<section class="pane" aria-labelledby="install-heading">
+  <span class="pane__label mono">{label}</span>
+  <h2 id="install-heading">{heading}</h2>
+  <div class="install__steps">
+    <div class="install__step">
+      <h3 class="mono">{brewColumnLabel}</h3>
+      <div class="command-box command-box--full">
+        <code>{brewCommand}</code>
+      </div>
+      <p>{brewNote}</p>
+    </div>
+    <div class="install__step">
+      <h3 class="mono">{manualColumnLabel}</h3>
+      <ol>
+        {manualSteps.map((step) => <li>{step}</li>)}
+      </ol>
+      <p>{manualNote}</p>
+    </div>
+  </div>
+</section>

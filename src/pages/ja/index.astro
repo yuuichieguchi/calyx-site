@@ -1,0 +1,202 @@
+---
+import '../../styles/global.css';
+import Header from '../../components/Header.astro';
+import Hero from '../../components/Hero.astro';
+import DemoVideo from '../../components/DemoVideo.astro';
+import Feature from '../../components/Feature.astro';
+import Install from '../../components/Install.astro';
+import Faq from '../../components/Faq.astro';
+import Footer from '../../components/Footer.astro';
+import LandingHead from '../../components/LandingHead.astro';
+
+import { APPCAST_URL, ZIP_URL, featureImages, featureLayout, getReleaseChipText } from '../../lib/site';
+
+const chipText = await getReleaseChipText();
+
+const featureText: Record<string, { heading: string; body: string; alt?: string }> = {
+  agents: {
+    heading: '手が止まっているエージェントがすぐわかる',
+    body: 'エージェントサイドバーは、接続しているエージェントを working、blocked、idle、done の状態とともに並べます。行にはペイン自身のタイトル、作業ディレクトリ、CLI 名が出て、目を離している間に発言したペインには未読バッジが付きます。クリックすればそのペインに移動します。',
+    alt: '接続中のエージェント 3 つが、状態、ペインのタイトル、CLI 名とともに並んだエージェントサイドバー。',
+  },
+  approvals: {
+    heading: '承認はひとつのパネルにまとまる',
+    body: 'Claude Code と Codex の権限プロンプト、always-approve で動く Grok のツール呼び出し、pi のすべてのツール呼び出しが、通知の形をしたパネルに届きます。主要な操作がひとつ、Options メニューに CLI が提示する残りの選択肢が並びます。連携は Settings で有効にします。有効にしたあとも、自動承認は別のオプトインなので、こちらから求めない限り承認が代わりに行われることはありません。',
+    alt: '画面右上に通知の形で表示された権限リクエスト。主要な操作と Options メニューが並んでいる。',
+  },
+  subagents: {
+    heading: 'サブエージェントの進行も行で追える',
+    body: 'サブエージェントを動かしているペインには件数バッジが付き、子を字下げした行として展開します（報告する CLI の場合）。各行には子の状態が出て、CLI が報告していれば実行中のツールと、その対象のコマンド、パス、URL も並びます。',
+    alt: '実行中のサブエージェントごとに、字下げされた子の行へ展開されたペインの行。',
+  },
+  git: {
+    heading: 'diff レビューをターミナルの中で終わらせる',
+    body: '作業ツリーの変更、ステージング状態、コミット履歴が Git サイドバーに並びます。ウィンドウから届くリポジトリごとに 1 つのセクションになります。diff の行にコメントを付け、レビュー全体をエージェントのペインに送れます。',
+    alt: '未ステージのファイルとコミットグラフが並ぶ Git サイドバーと、README.md の差分。',
+  },
+  sessions: {
+    heading: 'アプリを終了してもセッションは残る',
+    body: '有効にすると、デーモンが支えるターミナルがアプリの終了やクラッシュを越えて残ります。Session Browser に動いているセッションが並び、そこから再接続できます。calyx-session を配置した SSH 先のセッションも同じように扱えます。',
+    alt: '実行中の永続セッション 2 件が Show と Kill のボタンとともに並んだ Session Browser のウィンドウ。',
+  },
+  terminal: {
+    heading: '土台はターミナルとして作ってある',
+    body: '描画は libghostty が Metal で行います。~/.config/ghostty/config を読み込み、多くの設定はその場で反映されます。タブグループ、分割、コマンドパレット、スクロールバック検索が加わり、Liquid Glass のウィンドウは「透明度を下げる」設定のもとでは完全な不透明になります。',
+    alt: 'ターミナルのペイン 1 つとタブのサイドバーが見える Calyx のウィンドウ。半透明のウィンドウ越しにデスクトップの壁紙が透けている。',
+  },
+  mcp: {
+    heading: 'エージェントが読めるターミナル',
+    body: 'ペイン、コマンド、取得した出力、ブラウザタブ、言語サーバー、他のエージェントを、MCP と同梱の calyx CLI から扱えます。エージェントは sleep で待つ代わりに、コマンドの終了を待って結果を読めます。コマンド行とキャプチャした出力は、エージェントが読む前に既知のシークレットのパターンを検査して伏せられます。',
+  },
+};
+
+const features = featureLayout.map((entry) => {
+  const text = featureText[entry.tab];
+  if (!text) throw new Error(`Missing feature text for tab "${entry.tab}"`);
+  return {
+    tab: entry.tab,
+    heading: text.heading,
+    body: text.body,
+    image: entry.image && text.alt ? { src: entry.image, alt: text.alt } : undefined,
+    span: entry.span,
+    layout: entry.layout,
+  };
+});
+---
+
+<html lang="ja">
+  <head>
+    <LandingHead
+      title="Calyx | コーディングエージェントを並列実行し、監視する"
+      description="Calyx は Claude Code、Codex、OpenCode、Hermes、Grok、pi を並べて動かす macOS ネイティブのターミナルです。"
+      canonical="https://getcalyx.app/ja/"
+      ogTitle="Calyx: コーディングエージェントを並列実行し、監視する"
+      ogDescription="Claude Code、Codex、OpenCode、Hermes、Grok、pi を並べて動かす macOS ネイティブのターミナル。"
+      ogUrl="https://getcalyx.app/ja/"
+      ogImageAlt="接続中のエージェント 3 つが、状態、ペインのタイトル、CLI 名とともに並んだエージェントサイドバー。"
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-heading">本文へ移動</a>
+    <Header
+      navLabel="サイト内リンク"
+      docsLabel="ドキュメント"
+      docsHref="https://help.getcalyx.app/ja/"
+      githubLabel="GitHub"
+      githubHref="https://github.com/yuuichieguchi/Calyx"
+      langSwitchLabel="English"
+      langSwitchHref="/"
+      downloadLabel="ダウンロード"
+      downloadHref={ZIP_URL}
+      homeHref="/ja/"
+    />
+    <main>
+      <div class="wrap">
+        <Hero
+          heading="コーディングエージェントを並列実行し、監視する"
+          headingSegments={['コーディングエージェントを', '並列実行し、監視する']}
+          lead="Calyx は Claude Code、Codex、OpenCode、Hermes、Grok、pi を並べて動かす macOS ネイティブのターミナルです。各エージェントの状態が一覧で見え、エージェントが出すプロンプトはひとつのパネルに届き、セッションはアプリを終了しても残り、diff レビューはコードを書いたペインにそのまま返せます。"
+          downloadLabel="Mac 用をダウンロード"
+          downloadHref={ZIP_URL}
+          chipText={chipText}
+          brewCommand="brew install --cask calyx"
+          copyLabel="コピー"
+          copiedLabel="コピーしました"
+          copyFailedLabel="コピーできませんでした"
+          githubHref="https://github.com/yuuichieguchi/Calyx"
+          githubLinkLabel="GitHub で見る"
+          systemRequirements="macOS 26 Tahoe 以降、Apple Silicon、MIT ライセンス"
+          appcastUrl={APPCAST_URL}
+        />
+      </div>
+
+      <div class="wrap">
+        <DemoVideo
+          label="demo"
+          heading="デモ"
+          poster={featureImages.agentSidebar}
+          playLabel="デモ動画を再生"
+          pauseLabel="デモ動画を一時停止"
+        />
+      </div>
+
+      <div class="wrap features">
+        {
+          features.map((feature) => (
+            <Feature
+              tab={feature.tab}
+              heading={feature.heading}
+              body={feature.body}
+              image={feature.image}
+              span={feature.span}
+              layout={feature.layout}
+            />
+          ))
+        }
+      </div>
+
+      <div class="wrap">
+        <Install
+          label="install"
+          heading="インストール"
+          brewColumnLabel="Homebrew"
+          brewCommand="brew install --cask calyx"
+          brewNote="更新は brew upgrade --cask calyx で行います。"
+          manualColumnLabel="手動ダウンロード"
+          manualSteps={['Calyx.zip をダウンロード', 'ダブルクリックで解凍', 'Calyx.app を /Applications に移動']}
+          manualNote="直接ダウンロード版は Sparkle で更新を確認します。"
+        />
+      </div>
+
+      <div class="wrap">
+        <Faq
+          label="faq"
+          heading="よくある質問"
+          items={[
+            { question: 'どの Mac で動きますか？', answer: 'macOS 26 Tahoe 以降の Apple Silicon (arm64) です。Intel 版はありません。' },
+            { question: '料金はかかりますか？', answer: 'かかりません。MIT ライセンスのオープンソースです。' },
+            { question: 'どのエージェントに対応していますか？', answer: 'Claude Code、Codex、OpenCode、Hermes、Grok、pi、および herdr がホストするペインです。' },
+            { question: 'Calyx が勝手に承認することはありますか？', answer: 'ありません。承認の連携は Settings で有効にするまで動かず、自動承認はさらに別のオプトインです。pi は自身の権限プロンプトを持たないため、連携を切っている間、pi のツール呼び出しはレビューされずに実行されます。' },
+            { question: 'Ghostty とはどういう関係ですか？', answer: '描画には Ghostty v1.3.1 の libghostty を使い、~/.config/ghostty/config を読み込みます。Ghostty のキーバインド設定から Calyx の操作を呼ぶこともできます。' },
+            { question: 'アプリを終了してもセッションは残りますか？', answer: '永続セッションを有効にすれば残ります。calyx-session デーモンが保持し、Session Browser から再接続できます。SSH 先に calyx-session を配置すれば、リモートでも同じように使えます。' },
+            {
+              question: 'データはどこかに送られますか？',
+              answer: 'テレメトリも解析も送信しません。外部との通信は、Sparkle の appcast 取得とリリースのダウンロード、任意の言語サーバーのインストール、利用者自身が開いたブラウザタブと SSH 接続に限られます。',
+              link: { label: 'プライバシーポリシー', href: 'https://help.getcalyx.app/ja/legal/privacy/' },
+            },
+            { question: '更新はどうなりますか？', answer: '直接ダウンロード版は Sparkle が更新を確認します。Homebrew 版は brew upgrade --cask calyx で更新します。' },
+          ]}
+        />
+      </div>
+    </main>
+
+    <Footer
+      columns={[
+        {
+          heading: 'ドキュメント',
+          links: [
+            { label: 'はじめに', href: 'https://help.getcalyx.app/ja/getting-started/' },
+            { label: '使い方', href: 'https://help.getcalyx.app/ja/usage/' },
+            { label: 'リファレンス', href: 'https://help.getcalyx.app/ja/reference/' },
+          ],
+        },
+        {
+          heading: '規約・ポリシー',
+          links: [
+            { label: '利用規約', href: 'https://help.getcalyx.app/ja/legal/terms/' },
+            { label: 'プライバシーポリシー', href: 'https://help.getcalyx.app/ja/legal/privacy/' },
+            { label: 'ライセンス', href: 'https://help.getcalyx.app/ja/legal/license/' },
+          ],
+        },
+        {
+          heading: 'プロジェクト',
+          links: [
+            { label: 'GitHub', href: 'https://github.com/yuuichieguchi/Calyx' },
+            { label: 'リリース', href: 'https://github.com/yuuichieguchi/Calyx/releases' },
+          ],
+        },
+      ]}
+      copyright="Calyx は MIT ライセンスのオープンソースです。"
+    />
+  </body>
+</html>

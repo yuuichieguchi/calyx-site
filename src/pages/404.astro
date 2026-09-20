@@ -1,0 +1,101 @@
+---
+import '../styles/global.css';
+import HeadBase from '../components/HeadBase.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+import { ZIP_URL } from '../lib/site';
+---
+
+<html lang="en">
+  <head>
+    <HeadBase />
+    <title>Calyx | Page not found</title>
+    <meta name="description" content="The page you asked for is not here. Calyx itself is one click away." />
+    <link rel="canonical" href="https://getcalyx.app/404" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-heading">Skip to content</a>
+    <Header
+      navLabel="Site"
+      docsLabel="Docs"
+      docsHref="https://help.getcalyx.app/"
+      githubLabel="GitHub"
+      githubHref="https://github.com/yuuichieguchi/Calyx"
+      langSwitchLabel="日本語"
+      langSwitchHref="/ja/"
+      downloadLabel="Download"
+      downloadHref={ZIP_URL}
+      homeHref="/"
+    />
+    <main>
+      <div class="wrap">
+        <section class="pane" aria-labelledby="main-heading">
+          <span class="pane__label mono">404</span>
+          <div class="not-found__block">
+            <h1 id="main-heading" tabindex="-1">This page does not exist.</h1>
+            <p class="hero__lead">The page you asked for is not here. Calyx itself is one click away.</p>
+            <ul class="hero__links">
+              <li><a href="/">Calyx for Mac</a></li>
+              <li><a href="https://help.getcalyx.app/">Documentation</a></li>
+            </ul>
+          </div>
+          <div class="not-found__block" lang="ja">
+            <h2>このページはありません。</h2>
+            <p class="hero__lead">お探しのページは見つかりませんでした。Calyx のトップはこちらです。</p>
+            <ul class="hero__links">
+              <li><a href="/ja/">Mac 版 Calyx</a></li>
+              <li><a href="https://help.getcalyx.app/ja/">ドキュメント</a></li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <Footer
+      columns={[
+        {
+          heading: 'Documentation',
+          links: [
+            { label: 'Getting Started', href: 'https://help.getcalyx.app/getting-started/' },
+            { label: 'Usage', href: 'https://help.getcalyx.app/usage/' },
+            { label: 'Reference', href: 'https://help.getcalyx.app/reference/' },
+          ],
+        },
+        {
+          heading: 'Policies',
+          links: [
+            { label: 'Terms', href: 'https://help.getcalyx.app/legal/terms/' },
+            { label: 'Privacy', href: 'https://help.getcalyx.app/legal/privacy/' },
+            { label: 'License', href: 'https://help.getcalyx.app/legal/license/' },
+          ],
+        },
+        {
+          heading: 'Project',
+          links: [
+            { label: 'GitHub', href: 'https://github.com/yuuichieguchi/Calyx' },
+            { label: 'Releases', href: 'https://github.com/yuuichieguchi/Calyx/releases' },
+          ],
+        },
+      ]}
+      copyright="Calyx is open source under the MIT license."
+    />
+  </body>
+</html>
+
+<style>
+  ul.hero__links {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .not-found__block + .not-found__block {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+</style>
