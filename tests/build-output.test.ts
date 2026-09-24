@@ -270,6 +270,17 @@ describe('build output: ja page (dist/ja/index.html)', () => {
   });
 });
 
+describe('build output: OAuth client metadata document', () => {
+  it('publishes dist/oauth/mcp-client.json with a matching client_id', () => {
+    const filePath = path.join(distDir, 'oauth/mcp-client.json');
+    expect(existsSync(filePath)).toBe(true);
+
+    const raw = readFileSync(filePath, 'utf-8');
+    const parsed = JSON.parse(raw);
+    expect(parsed.client_id).toBe('https://getcalyx.app/oauth/mcp-client.json');
+  });
+});
+
 describe('build output: sitemap', () => {
   it('lists both locale root URLs across the sitemap index and its chunk', () => {
     const indexPath = path.join(distDir, 'sitemap-index.xml');

@@ -1,0 +1,14 @@
+{
+  "client_id": "https://getcalyx.app/oauth/mcp-client.json",
+  "client_name": "Calyx",
+  "redirect_uris": [
+    "http://127.0.0.1/callback",
+    "http://localhost/callback",
+    "http://127.0.0.1:41890/callback",
+    "http://localhost:41890/callback"
+  ],
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "token_endpoint_auth_method": "none",
+  "application_type": "native"
+}
