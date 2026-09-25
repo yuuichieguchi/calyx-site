@@ -44,9 +44,14 @@ const featureText: Record<string, { heading: string; body: string; alt?: string 
     body: '描画は libghostty が Metal で行います。~/.config/ghostty/config を読み込み、多くの設定はその場で反映されます。タブグループ、分割、コマンドパレット、スクロールバック検索が加わり、Liquid Glass のウィンドウは「透明度を下げる」設定のもとでは完全な不透明になります。',
     alt: 'ターミナルのペイン 1 つとタブのサイドバーが見える Calyx のウィンドウ。半透明のウィンドウ越しにデスクトップの壁紙が透けている。',
   },
-  mcp: {
+  'agent tools': {
     heading: 'エージェントが読めるターミナル',
     body: 'ペイン、コマンド、取得した出力、ブラウザタブ、言語サーバー、他のエージェントを、MCP と同梱の calyx CLI から扱えます。エージェントは sleep で待つ代わりに、コマンドの終了を待って結果を読めます。コマンド行とキャプチャした出力は、エージェントが読む前に既知のシークレットのパターンを検査して伏せられます。',
+  },
+  'mcp apps': {
+    heading: 'MCP Appsをサポート',
+    body: 'Settings で MCP サーバーを追加すると、Calyx がそのツールをすべてのエージェント CLI に公開します。ツールに MCP Apps のビューが付いていれば、呼び出したエージェントのペインの右側にドックとして開き、ターミナルのテーマで描画されます。アプリが開こうとするリンクや、エージェントへ送り返そうとするメッセージは、先に承認パネルを通ります。',
+    alt: 'Claude Code のペインの右側にドックされた MCP App のビュー。show-map、map、claude-code、Completed と書かれたタイトルバーと Close ボタンの下に、東京周辺の地図が表示されている。',
   },
 };
 
@@ -161,7 +166,7 @@ const features = featureLayout.map((entry) => {
             { question: 'アプリを終了してもセッションは残りますか？', answer: '永続セッションを有効にすれば残ります。calyx-session デーモンが保持し、Session Browser から再接続できます。SSH 先に calyx-session を配置すれば、リモートでも同じように使えます。' },
             {
               question: 'データはどこかに送られますか？',
-              answer: 'テレメトリも解析も送信しません。外部との通信は、Sparkle の appcast 取得とリリースのダウンロード、任意の言語サーバーのインストール、利用者自身が開いたブラウザタブと SSH 接続に限られます。',
+              answer: 'テレメトリも解析も送信しません。外部との通信は、Sparkle の appcast 取得とリリースのダウンロード、任意の言語サーバーのインストール、利用者が Settings で追加した MCP サーバー、利用者自身が開いたブラウザタブと SSH 接続に限られます。',
               link: { label: 'プライバシーポリシー', href: 'https://help.getcalyx.app/ja/legal/privacy/' },
             },
             { question: '更新はどうなりますか？', answer: '直接ダウンロード版は Sparkle が更新を確認します。Homebrew 版は brew upgrade --cask calyx で更新します。' },

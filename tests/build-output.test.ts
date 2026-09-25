@@ -234,7 +234,7 @@ describe('build output: en page (dist/index.html)', () => {
   });
 
   it('shows every tab label as its own element text', () => {
-    for (const label of ['agents', 'approvals', 'subagents', 'git', 'sessions', 'terminal', 'mcp']) {
+    for (const label of ['agents', 'approvals', 'subagents', 'git', 'sessions', 'terminal', 'agent tools', 'mcp apps']) {
       expect(hasExactLabel(html, label)).toBe(true);
     }
   });

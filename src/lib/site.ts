@@ -12,6 +12,7 @@ import subagentRows from '../assets/subagent-rows.png';
 import diffReview from '../assets/diff-review.png';
 import sessionBrowser from '../assets/session-browser.png';
 import planeView from '../assets/plane-view.png';
+import mcpApps from '../assets/mcp-apps.png';
 import { parseAppcast, formatMegabytes } from './appcast';
 
 export const APPCAST_URL = 'https://yuuichieguchi.github.io/Calyx/appcast.xml';
@@ -24,6 +25,7 @@ export const featureImages = {
   diffReview,
   sessionBrowser,
   planeView,
+  mcpApps,
 };
 
 export type FeatureSpan = 'full' | 'half';
@@ -49,7 +51,8 @@ export const featureLayout: FeatureLayoutEntry[] = [
   { tab: 'git', image: featureImages.diffReview, span: 'full', layout: 'image-text' },
   { tab: 'sessions', image: featureImages.sessionBrowser, span: 'half', layout: 'stacked' },
   { tab: 'terminal', image: featureImages.planeView, span: 'half', layout: 'stacked' },
-  { tab: 'mcp', span: 'full', layout: 'text-only' },
+  { tab: 'agent tools', span: 'full', layout: 'text-only' },
+  { tab: 'mcp apps', image: featureImages.mcpApps, span: 'full', layout: 'text-image' },
 ];
 
 async function fetchReleaseChipText(): Promise<string | null> {

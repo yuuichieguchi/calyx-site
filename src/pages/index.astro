@@ -44,9 +44,14 @@ const featureText: Record<string, { heading: string; body: string; alt?: string 
     body: 'libghostty renders on Metal. Calyx reads ~/.config/ghostty/config and hot-reloads most of it, then adds tab groups, splits, a command palette, scrollback search, and a Liquid Glass window that turns fully opaque under Reduce Transparency.',
     alt: 'A Calyx window with one terminal pane and the tab sidebar, its translucent chrome showing the desktop wallpaper through it.',
   },
-  mcp: {
+  'agent tools': {
     heading: 'Give agents a terminal they can read',
     body: 'Panes, commands, captured output, browser tabs, language servers, and peer agents are exposed over MCP and the bundled calyx CLI. An agent waits for a command to finish and reads its result instead of sleeping and guessing. Command text and captured output are checked for known secret patterns and redacted before an agent can read them.',
+  },
+  'mcp apps': {
+    heading: 'MCP Apps support',
+    body: 'Add an MCP server in Settings and Calyx republishes its tools to every agent CLI. When a tool comes with an MCP Apps view, the view opens docked to the right of the pane whose agent called it, drawn in your terminal theme. A link the app wants to open, or a message it wants to send back to the agent, goes through the approval panel first.',
+    alt: 'A Claude Code pane with an MCP App view docked to its right: a map of the Tokyo area under a title bar reading show-map, map, claude-code, Completed, with a Close button.',
   },
 };
 
@@ -160,7 +165,7 @@ const features = featureLayout.map((entry) => {
             { question: 'Do sessions survive quitting the app?', answer: 'They do once you enable persistent sessions. A calyx-session daemon holds them, and the Session Browser reattaches. Deploy calyx-session to an SSH host to do the same remotely.' },
             {
               question: 'Does Calyx send my data anywhere?',
-              answer: 'No telemetry and no analytics. Outbound traffic is limited to the Sparkle appcast and release download, the optional language-server install, and the browser tabs and SSH connections you start yourself.',
+              answer: 'No telemetry and no analytics. Outbound traffic is limited to the Sparkle appcast and release download, the optional language-server install, the MCP servers you add in Settings, and the browser tabs and SSH connections you start yourself.',
               link: { label: 'Privacy policy', href: 'https://help.getcalyx.app/legal/privacy/' },
             },
             { question: 'How do updates work?', answer: 'Direct downloads update through Sparkle. Homebrew installs update with brew upgrade --cask calyx.' },
