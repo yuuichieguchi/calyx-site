@@ -29,6 +29,11 @@ const featureText: Record<string, { heading: string; body: string; alt?: string 
     body: 'A pane running subagents gains a count badge and expands into indented child rows, for the CLIs that report them. Each child shows its state, and the tool it is working on with the command, path, or URL where its CLI reports one.',
     alt: 'A pane row expanded into indented child rows, one per running subagent, each with its own state.',
   },
+  'mission map': {
+    heading: 'See every pane at once',
+    body: 'Cmd+Shift+M lays out every terminal pane in the window as a card showing its agent’s state and unread message count. When one agent messages another, a line joins their cards and disappears two minutes after the last message. Click a line to read the messages sent along it. Double-click a card, or click the open button at its top right, to jump to its pane.',
+    alt: 'Mission Map over a dimmed Calyx window: three Claude Code cards in a row, each with a yellow state dot, an unread badge of 1, its pane title, and the calyx-ipc tool call it is running. Blue lines join the cards, and below them a popover titled Message shows the text one agent sent.',
+  },
   git: {
     heading: 'Review the diff without leaving the terminal',
     body: 'Working changes, staging state, and commit history sit in the Git sidebar, one section per repository the window can reach. Comment on individual diff lines and submit the whole review to an agent pane.',

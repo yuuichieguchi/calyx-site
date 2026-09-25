@@ -13,6 +13,7 @@ import diffReview from '../assets/diff-review.png';
 import sessionBrowser from '../assets/session-browser.png';
 import planeView from '../assets/plane-view.png';
 import mcpApps from '../assets/mcp-apps.png';
+import missionMap from '../assets/mission-map.png';
 import { parseAppcast, formatMegabytes } from './appcast';
 
 export const APPCAST_URL = 'https://yuuichieguchi.github.io/Calyx/appcast.xml';
@@ -26,6 +27,7 @@ export const featureImages = {
   sessionBrowser,
   planeView,
   mcpApps,
+  missionMap,
 };
 
 export type FeatureSpan = 'full' | 'half';
@@ -48,6 +50,7 @@ export const featureLayout: FeatureLayoutEntry[] = [
   { tab: 'agents', image: featureImages.agentSidebar, span: 'full', layout: 'text-image' },
   { tab: 'approvals', image: featureImages.approvalInbox, span: 'half', layout: 'stacked' },
   { tab: 'subagents', image: featureImages.subagentRows, span: 'half', layout: 'stacked' },
+  { tab: 'mission map', image: featureImages.missionMap, span: 'full', layout: 'text-image' },
   { tab: 'git', image: featureImages.diffReview, span: 'full', layout: 'image-text' },
   { tab: 'sessions', image: featureImages.sessionBrowser, span: 'half', layout: 'stacked' },
   { tab: 'terminal', image: featureImages.planeView, span: 'half', layout: 'stacked' },
