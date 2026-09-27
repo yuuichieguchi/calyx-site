@@ -8,10 +8,13 @@ export interface Props {
   poster: ImageMetadata;
   playLabel: string;
   pauseLabel: string;
+  muteLabel: string;
+  unmuteLabel: string;
 }
 
-const { label, heading, poster, playLabel, pauseLabel } = Astro.props;
+const { label, heading, poster, playLabel, pauseLabel, muteLabel, unmuteLabel } = Astro.props;
 const optimizedPoster = await getImage({ src: poster });
+const demoSources = ['/demo-a.mp4', '/demo-b.mp4'];
 ---
 
 <section class="pane demo" aria-label={heading}>
@@ -25,9 +28,36 @@ const optimizedPoster = await getImage({ src: poster });
         playsinline
         preload="metadata"
         poster={optimizedPoster.src}
+        data-demo-sources={demoSources.join(',')}
+      ></video>
+      <button
+        type="button"
+        class="demo__toggle demo__mute"
+        data-demo-mute
+        data-mute-label={muteLabel}
+        data-unmute-label={unmuteLabel}
+        aria-label={unmuteLabel}
       >
-        <source src="/demo.mp4" type="video/mp4" />
-      </video>
+        <svg data-demo-icon-muted viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9 H8 L13 5 V19 L8 15 H4 Z" fill="currentColor" />
+          <path
+            d="M16 8 L21 16 M21 8 L16 16"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+        <svg data-demo-icon-unmuted viewBox="0 0 24 24" aria-hidden="true" hidden>
+          <path d="M4 9 H8 L13 5 V19 L8 15 H4 Z" fill="currentColor" />
+          <path
+            d="M16 8.5 C18 10 18 14 16 15.5"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            fill="none"
+          />
+        </svg>
+      </button>
       <button
         type="button"
         class="demo__toggle"
@@ -52,7 +82,7 @@ const optimizedPoster = await getImage({ src: poster });
         }
       </style>
       <video controls preload="metadata" poster={optimizedPoster.src}>
-        <source src="/demo.mp4" type="video/mp4" />
+        <source src={demoSources[0]} type="video/mp4" />
       </video>
     </noscript>
   </div>
@@ -63,6 +93,15 @@ const optimizedPoster = await getImage({ src: poster });
   const toggle = document.querySelector<HTMLButtonElement>('[data-demo-toggle]');
   const iconPlay = document.querySelector<SVGElement>('[data-demo-icon-play]');
   const iconPause = document.querySelector<SVGElement>('[data-demo-icon-pause]');
+  const muteToggle = document.querySelector<HTMLButtonElement>('[data-demo-mute]');
+  const iconMuted = document.querySelector<SVGElement>('[data-demo-icon-muted]');
+  const iconUnmuted = document.querySelector<SVGElement>('[data-demo-icon-unmuted]');
+
+  if (video && video.dataset.demoSources !== undefined) {
+    const sources = video.dataset.demoSources.split(',');
+    const chosen = sources[Math.floor(Math.random() * sources.length)];
+    video.src = chosen;
+  }
 
   if (
     video &&
@@ -107,5 +146,32 @@ const optimizedPoster = await getImage({ src: poster });
     }
 
     syncState();
+  }
+
+  if (
+    video &&
+    muteToggle &&
+    iconMuted &&
+    iconUnmuted &&
+    muteToggle.dataset.muteLabel !== undefined &&
+    muteToggle.dataset.unmuteLabel !== undefined
+  ) {
+    const muteLabel = muteToggle.dataset.muteLabel;
+    const unmuteLabel = muteToggle.dataset.unmuteLabel;
+
+    const syncMuteState = () => {
+      const isMuted = video.muted;
+      muteToggle.setAttribute('aria-label', isMuted ? unmuteLabel : muteLabel);
+      iconMuted.toggleAttribute('hidden', !isMuted);
+      iconUnmuted.toggleAttribute('hidden', isMuted);
+    };
+
+    video.addEventListener('volumechange', syncMuteState);
+
+    muteToggle.addEventListener('click', () => {
+      video.muted = !video.muted;
+    });
+
+    syncMuteState();
   }
 </script>

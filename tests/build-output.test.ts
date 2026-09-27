@@ -82,11 +82,13 @@ type PageCase = {
   file: string;
   canonical: string;
   helpBase: string;
+  muteLabel: string;
+  unmuteLabel: string;
 };
 
 const pages: PageCase[] = [
-  { label: 'en', file: 'index.html', canonical: 'https://getcalyx.app/', helpBase: 'https://help.getcalyx.app/' },
-  { label: 'ja', file: 'ja/index.html', canonical: 'https://getcalyx.app/ja/', helpBase: 'https://help.getcalyx.app/ja/' },
+  { label: 'en', file: 'index.html', canonical: 'https://getcalyx.app/', helpBase: 'https://help.getcalyx.app/', muteLabel: 'Mute demo video', unmuteLabel: 'Unmute demo video' },
+  { label: 'ja', file: 'ja/index.html', canonical: 'https://getcalyx.app/ja/', helpBase: 'https://help.getcalyx.app/ja/', muteLabel: 'デモ動画をミュートする', unmuteLabel: 'デモ動画の音声をオンにする' },
 ];
 
 describe('build output: shared requirements', () => {
@@ -124,17 +126,55 @@ describe('build output: shared requirements', () => {
         ).toBe(true);
       });
 
-      it('embeds the demo video with a poster', () => {
+      it('embeds the scripted demo video with A/B sources and a poster, without <source>', () => {
         const start = html.indexOf('<video');
         expect(start).toBeGreaterThanOrEqual(0);
         const end = html.indexOf('</video>', start);
         expect(end).toBeGreaterThan(start);
-        const videoBlock = html.slice(start, end === -1 ? undefined : end + '</video>'.length);
-        expect(videoBlock.includes('demo.mp4')).toBe(true);
-        const videoTagEnd = html.indexOf('>', start);
-        const videoTag = html.slice(start, videoTagEnd + 1);
-        const poster = attr(videoTag, 'poster');
-        expect(poster).toBeTruthy();
+        const videoBlock = html.slice(start, end + '</video>'.length);
+        const videoTag = tags(videoBlock, 'video')[0];
+        expect(videoTag).toBeDefined();
+        const sources = attr(videoTag, 'data-demo-sources');
+        expect(sources).not.toBeNull();
+        expect((sources as string).split(',').map((s) => s.trim()).sort()).toEqual(['/demo-a.mp4', '/demo-b.mp4']);
+        expect(attr(videoTag, 'poster')).toBeTruthy();
+        expect(/<source\b/i.test(videoBlock)).toBe(false);
+      });
+
+      it('keeps a noscript fallback video whose source is /demo-a.mp4', () => {
+        const noscript = html.match(/<noscript\b[^>]*>([\s\S]*?)<\/noscript>/gi) ?? [];
+        const withVideo = noscript.filter((block) => /<video\b/i.test(block));
+        expect(withVideo.length).toBe(1);
+        const sourceTags = tags(withVideo[0], 'source');
+        expect(sourceTags.length).toBe(1);
+        expect(attr(sourceTags[0], 'src')).toBe('/demo-a.mp4');
+      });
+
+      it('renders a mute toggle button with locale-specific labels, initially muted', () => {
+        const buttons = tags(html, 'button').filter((tag) => attr(tag, 'data-demo-mute') !== null);
+        expect(buttons.length).toBe(1);
+        const button = buttons[0];
+        expect(attr(button, 'type')).toBe('button');
+        expect(attr(button, 'data-mute-label')).toBe(page.muteLabel);
+        expect(attr(button, 'data-unmute-label')).toBe(page.unmuteLabel);
+        expect(attr(button, 'aria-label')).toBe(page.unmuteLabel);
+
+        // Autoplay depends on the scripted video being muted.
+        const scriptedVideos = tags(html, 'video').filter((tag) => attr(tag, 'data-demo-video') !== null);
+        expect(scriptedVideos.length).toBeGreaterThanOrEqual(1);
+        expect(attr(scriptedVideos[0], 'muted')).not.toBeNull();
+
+        // Initial icon state inside the mute button: muted icon visible, unmuted icon hidden.
+        const buttonStart = html.indexOf(button);
+        const buttonEnd = html.indexOf('</button>', buttonStart);
+        expect(buttonEnd).toBeGreaterThan(buttonStart);
+        const buttonBlock = html.slice(buttonStart, buttonEnd);
+        const mutedIcons = tags(buttonBlock, 'svg').filter((tag) => attr(tag, 'data-demo-icon-muted') !== null);
+        const unmutedIcons = tags(buttonBlock, 'svg').filter((tag) => attr(tag, 'data-demo-icon-unmuted') !== null);
+        expect(mutedIcons.length).toBe(1);
+        expect(unmutedIcons.length).toBe(1);
+        expect(attr(mutedIcons[0], 'hidden')).toBeNull();
+        expect(attr(unmutedIcons[0], 'hidden')).not.toBeNull();
       });
 
       it('gives every image an alt attribute, decorative or not', () => {
@@ -267,6 +307,14 @@ describe('build output: ja page (dist/ja/index.html)', () => {
 
   it('links to the Japanese docs site', () => {
     expect(hasTagWithAttrEqualTo(html, 'a', 'href', 'https://help.getcalyx.app/ja/')).toBe(true);
+  });
+});
+
+describe('build output: demo video assets', () => {
+  it('publishes demo-a.mp4 and demo-b.mp4 and no longer publishes demo.mp4', () => {
+    expect(existsSync(path.join(distDir, 'demo-a.mp4'))).toBe(true);
+    expect(existsSync(path.join(distDir, 'demo-b.mp4'))).toBe(true);
+    expect(existsSync(path.join(distDir, 'demo.mp4'))).toBe(false);
   });
 });
 

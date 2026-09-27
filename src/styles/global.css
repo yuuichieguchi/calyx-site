@@ -383,6 +383,10 @@ main > .wrap:first-child {
   display: none;
 }
 
+.demo__mute {
+  right: calc(0.75rem + 2.25rem + 0.5rem);
+}
+
 /* --- Features grid: a 12-column grid with explicit spans, in source order. --- */
 .features {
   display: grid;
