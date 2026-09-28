@@ -13,6 +13,7 @@ export interface Props {
   downloadLabel: string;
   downloadHref: string;
   homeHref: string;
+  menuLabel: string;
 }
 
 const {
@@ -26,6 +27,7 @@ const {
   downloadLabel,
   downloadHref,
   homeHref,
+  menuLabel,
 } = Astro.props;
 ---
 
@@ -35,7 +37,26 @@ const {
       <Image src={logo} alt="" width={28} height={28} densities={[1, 2]} />
       Calyx
     </a>
-    <nav class="site-header__links" aria-label={navLabel}>
+    <button
+      type="button"
+      class="site-header__menu"
+      aria-expanded="false"
+      aria-controls="site-nav"
+      aria-label={menuLabel}
+    >
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <g class="site-header__menu-icon-bars">
+          <path d="M4 6h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </g>
+        <g class="site-header__menu-icon-close">
+          <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </g>
+      </svg>
+    </button>
+    <nav id="site-nav" class="site-header__links" aria-label={navLabel}>
       <a href={docsHref}>{docsLabel}</a>
       <a href={githubHref}>{githubLabel}</a>
       <a href={langSwitchHref}>{langSwitchLabel}</a>
@@ -43,3 +64,65 @@ const {
     <a class="button button--sm site-header__download" href={downloadHref}>{downloadLabel}</a>
   </div>
 </header>
+
+<script>
+  // Mobile hamburger menu: toggles the nav dropdown below 559px. Above that
+  // breakpoint the nav is always visible via CSS, regardless of this state.
+  const headers = document.querySelectorAll<HTMLElement>('.site-header');
+
+  for (const header of headers) {
+    const menuButton = header.querySelector<HTMLButtonElement>('.site-header__menu');
+    const nav = header.querySelector<HTMLElement>('#site-nav');
+    if (!menuButton || !nav) {
+      throw new Error('site-header markup is missing the menu button or nav');
+    }
+
+    const close = (): void => {
+      menuButton.setAttribute('aria-expanded', 'false');
+    };
+    const open = (): void => {
+      menuButton.setAttribute('aria-expanded', 'true');
+    };
+
+    menuButton.addEventListener('click', () => {
+      const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
+      if (isOpen) {
+        close();
+      } else {
+        open();
+      }
+    });
+
+    nav.addEventListener('click', (event) => {
+      if (event.target instanceof HTMLAnchorElement) {
+        close();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && menuButton.getAttribute('aria-expanded') === 'true') {
+        close();
+        menuButton.focus();
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      if (event.target instanceof Node && !header.contains(event.target)) {
+        close();
+      }
+    });
+
+    const narrowViewport = window.matchMedia('(max-width: 559px)');
+    narrowViewport.addEventListener('change', (event) => {
+      if (!event.matches) {
+        close();
+      }
+    });
+
+    header.addEventListener('focusout', (event) => {
+      if (event.relatedTarget instanceof Node && !header.contains(event.relatedTarget)) {
+        close();
+      }
+    });
+  }
+</script>
