@@ -58,6 +58,11 @@ const featureText: Record<string, { heading: string; body: string; alt?: string 
     body: 'Settings で MCP サーバーを追加すると、Calyx がそのツールをすべてのエージェント CLI に公開します。ツールに MCP Apps のビューが付いていれば、呼び出したエージェントのペインの右側にドックとして開き、ターミナルのテーマで描画されます。アプリが開こうとするリンクや、エージェントへ送り返そうとするメッセージは、先に承認パネルを通ります。',
     alt: 'Claude Code のペインの右側にドックされた MCP App のビュー。show-map、map、claude-code、Completed と書かれたタイトルバーと Close ボタンの下に、東京周辺の地図が表示されている。',
   },
+  usage: {
+    heading: 'Claude Code のトークン消費を内訳で見る',
+    body: 'AI Agent IPC と Usage Tracking をオンにすると、この Mac の Claude Code が自身で数えたトークン数を localhost 経由で Calyx に送ります。Calyx が動いていない間に記録対象のセッションが使った分は、Claude Code がそのセッションのトランスクリプトに書き出す合計から補います。Usage ウィンドウでは、今日、過去 7 日、過去 30 日、全期間のいずれかについて、モデル、effort、スレッド、プロジェクトごとの内訳を確認できます。エージェントも usage_report ツールで同じ数値を取得できます。Calyx がローカルのデータベースに保存するのはトークン数とそのラベルだけで、会話の本文は保存しません。保存したデータを外部に送信することもありません。',
+    alt: 'Usage ウィンドウ。Period、Project、Thread、Columns の各コントロールの下に、モデル、effort、スレッド、プロジェクトごとのトークン数の表が並び、Input、Cache Read、Cache Write、Output の列と Total 行がある。ステータス行には Receiving と最後のエクスポートの時刻が出ている。',
+  },
 };
 
 const features = featureLayout.map((entry) => {

@@ -111,6 +111,12 @@ describe('build output: shared requirements', () => {
         ).toBe(true);
       });
 
+      it('shows every tab label as its own element text', () => {
+        for (const label of ['agents', 'approvals', 'subagents', 'mission map', 'git', 'sessions', 'terminal', 'agent tools', 'mcp apps', 'usage']) {
+          expect(hasExactLabel(html, label)).toBe(true);
+        }
+      });
+
       it('includes the brew install command', () => {
         expect(html.includes('brew install --cask calyx')).toBe(true);
       });
@@ -271,12 +277,6 @@ describe('build output: en page (dist/index.html)', () => {
 
   it('links to the docs site', () => {
     expect(hasTagWithAttrEqualTo(html, 'a', 'href', 'https://help.getcalyx.app/')).toBe(true);
-  });
-
-  it('shows every tab label as its own element text', () => {
-    for (const label of ['agents', 'approvals', 'subagents', 'mission map', 'git', 'sessions', 'terminal', 'agent tools', 'mcp apps']) {
-      expect(hasExactLabel(html, label)).toBe(true);
-    }
   });
 });
 

@@ -14,6 +14,7 @@ import sessionBrowser from '../assets/session-browser.png';
 import planeView from '../assets/plane-view.png';
 import mcpApps from '../assets/mcp-apps.png';
 import missionMap from '../assets/mission-map.png';
+import usageWindow from '../assets/usage-window.png';
 import { parseAppcast, formatMegabytes } from './appcast';
 
 export const APPCAST_URL = 'https://yuuichieguchi.github.io/Calyx/appcast.xml';
@@ -28,6 +29,7 @@ export const featureImages = {
   planeView,
   mcpApps,
   missionMap,
+  usageWindow,
 };
 
 export type FeatureSpan = 'full' | 'half';
@@ -56,6 +58,7 @@ export const featureLayout: FeatureLayoutEntry[] = [
   { tab: 'terminal', image: featureImages.planeView, span: 'half', layout: 'stacked' },
   { tab: 'agent tools', span: 'full', layout: 'text-only' },
   { tab: 'mcp apps', image: featureImages.mcpApps, span: 'full', layout: 'text-image' },
+  { tab: 'usage', image: featureImages.usageWindow, span: 'full', layout: 'image-text' },
 ];
 
 async function fetchReleaseChipText(): Promise<string | null> {

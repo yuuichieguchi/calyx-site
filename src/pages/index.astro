@@ -58,6 +58,11 @@ const featureText: Record<string, { heading: string; body: string; alt?: string 
     body: 'Add an MCP server in Settings and Calyx republishes its tools to every agent CLI. When a tool comes with an MCP Apps view, the view opens docked to the right of the pane whose agent called it, drawn in your terminal theme. A link the app wants to open, or a message it wants to send back to the agent, goes through the approval panel first.',
     alt: 'A Claude Code pane with an MCP App view docked to its right: a map of the Tokyo area under a title bar reading show-map, map, claude-code, Completed, with a Close button.',
   },
+  usage: {
+    heading: 'See where your Claude Code tokens went',
+    body: 'With AI Agent IPC and Usage Tracking turned on, Claude Code on your Mac sends its own token counts to Calyx over localhost. Tokens a tracked session used while Calyx was not running are filled in from the totals Claude Code writes to that session’s transcript. The Usage window breaks them down by model, effort, thread, and project for today, the last 7 or 30 days, or all time, and agents can read the same numbers through the usage_report tool. Calyx stores the counts and their labels in a local database, never conversation text, and sends none of it anywhere.',
+    alt: 'The Usage window: Period, Project, Thread, and Columns controls above a table of token counts per model, effort, thread, and project, with Input, Cache Read, Cache Write, and Output columns and a Total row. A status line reads Receiving, with the time of the last export.',
+  },
 };
 
 const features = featureLayout.map((entry) => {
